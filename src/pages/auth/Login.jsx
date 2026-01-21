@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import api from "../../services/api";
 
 function Login() {
-  const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,12 +20,9 @@ function Login() {
         password,
       });
 
-      localStorage.setItem("token", res.data.data.access_token);
-      navigate("/dashboard");
+      await login(res.data.data.access_token);
     } catch (err) {
-      setError(err.response?.data?.message || "Login gagal");
-    } finally {
-      setLoading(false);
+      setError("Login gagal");
     }
   };
 

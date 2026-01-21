@@ -14,6 +14,15 @@ const api = axios.create({
 // ---------------------------
 // 2️⃣ Queue untuk request saat token sedang di-refresh
 // ---------------------------
+// axios khusus refresh (TANPA interceptor)
+const refreshApi = axios.create({
+  baseURL: "http://localhost:8000/api",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+});
+
 let isRefreshing = false;
 let failedQueue = [];
 
@@ -66,7 +75,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const res = await api.post("/auth/refresh");
+        const res = await refreshApi.post("/auth/refresh");
         const newToken = res.data.data.access_token;
 
         localStorage.setItem("token", newToken);

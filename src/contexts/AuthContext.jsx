@@ -38,8 +38,16 @@ export function AuthProvider({ children }) {
 
     try {
       const res = await api.get("/auth/me");
-      setUser(res.data.data);
-      navigate("/dashboard");
+      const userData = res.data.data;
+
+      setUser(userData);
+
+      // ⬅️ redirect BERDASARKAN ROLE
+      if (userData.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
     } catch {
       localStorage.removeItem("token");
       setUser(null);
@@ -60,7 +68,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  return <AuthContext.Provider value={{ user, loading, login, logout }}>{loading ? <div>Loading...</div> : children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, loading, login, logout }}>{children}</AuthContext.Provider>;
 }
 
 // helper hook
